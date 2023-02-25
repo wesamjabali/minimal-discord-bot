@@ -40,7 +40,7 @@ export const ban: Command = {
 
         await interaction.guild.members.ban(bannedUser.id, { reason });
 
-        await prisma.mute.upsert({
+        await prisma.ban.upsert({
             where: { userId: bannedUser.id },
             create: { userId: bannedUser.id, endDate },
             update: { endDate }
