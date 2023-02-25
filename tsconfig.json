@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2020",
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "esModuleInterop": true,
+    // @ alias
+    "outDir": "build",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "types": ["node"],
+    "skipLibCheck": true /* Skip type checking of declaration files. */,
+    "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
+  },
+  "include": ["src/**/*.ts", "tests/**/*.ts"],
+  "exclude": ["node_modules", "build"]
+}
