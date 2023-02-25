@@ -17,13 +17,17 @@ export const tag: Command = {
                 .setRequired(true)
                 .setAutocomplete(true)
         )
+        .addUserOption((option) =>
+            option.setName('user').setDescription('User to \\@mention in the response.')
+        )
         .toJSON(),
     async execute(interaction: ChatInputCommandInteraction) {
         const name = interaction.options.getString('name', true);
         const tag = await prisma.tag.findUnique({ where: { name } });
+        const user = interaction.options.getUser('user', false);
 
         if (tag.content) {
-            interaction.reply(`\`${name}:\`\n ${tag.content}`);
+            interaction.reply(`Tag \`${name}\`${user ? ` for ${user}` : ''}: \n ${tag.content}`);
             return;
         }
 

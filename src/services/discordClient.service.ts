@@ -26,9 +26,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
             ?.execute(interaction);
     }
 
-    if(interaction.isAutocomplete()){
+    if (interaction.isAutocomplete()) {
         commands
-            .find((command) => command.data.name === interaction.commandName && command.autocomplete)
+            .find(
+                (command) => command.data.name === interaction.commandName && command.autocomplete
+            )
             ?.autocomplete(interaction);
     }
 });
