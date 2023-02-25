@@ -22,5 +22,6 @@ module.exports = {
 		quotes: ['error', 'single'],
 		'quote-props': ['error', 'as-needed'],
 		'max-len': ['error', { code: 100 }],
-	}
+	},
+ 	excludeFiles: ['build/**/*']
 }
