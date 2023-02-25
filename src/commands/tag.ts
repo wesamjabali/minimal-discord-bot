@@ -36,7 +36,7 @@ export const tag: Command = {
     async autocomplete(interaction: AutocompleteInteraction) {
         const focusedValue = interaction.options.getFocused();
         const tags = (
-            await prisma.tag.findMany({ where: { name: { startsWith: focusedValue } } })
+            await prisma.tag.findMany({ where: { name: { contains: focusedValue } } })
         ).map((t) => ({ name: t.name, value: t.name }));
 
         interaction.respond(tags);
