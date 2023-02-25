@@ -7,6 +7,7 @@ import { tagEdit } from './tag-edit';
 import { tagList } from './tag-list';
 import { unban } from './unban';
 import { unmute } from './unmute';
+import { unwarn } from './unwarn';
 import { warn } from './warn';
 import { warnList } from './warn-list';
 
@@ -21,5 +22,6 @@ export const commands = [
     warnList,
     tagEdit,
     tag,
-    tagList
+    tagList,
+    unwarn
 ] as const;
