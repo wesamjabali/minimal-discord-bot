@@ -25,6 +25,12 @@ client.on(Events.InteractionCreate, async (interaction) => {
             .find((command) => command.data.name === interaction.commandName)
             ?.execute(interaction);
     }
+
+    if(interaction.isAutocomplete()){
+        commands
+            .find((command) => command.data.name === interaction.commandName && command.autocomplete)
+            ?.autocomplete(interaction);
+    }
 });
 
 client.on(Events.GuildMemberAdd, async (member) => {

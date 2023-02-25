@@ -1,5 +1,9 @@
 import { prisma } from '@/services/prisma.service';
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import {
+    AutocompleteInteraction,
+    ChatInputCommandInteraction,
+    SlashCommandBuilder
+} from 'discord.js';
 import { Command } from './Command.class';
 
 export const tag: Command = {
@@ -7,7 +11,11 @@ export const tag: Command = {
         .setName('tag')
         .setDescription('View a tag')
         .addStringOption((option) =>
-            option.setName('name').setDescription('Name of the tag.').setRequired(true)
+            option
+                .setName('name')
+                .setDescription('Name of the tag.')
+                .setRequired(true)
+                .setAutocomplete(true)
         )
         .toJSON(),
     async execute(interaction: ChatInputCommandInteraction) {
@@ -20,5 +28,13 @@ export const tag: Command = {
         }
 
         interaction.reply(`Tag ${name} doesn't exist.`);
+    },
+    async autocomplete(interaction: AutocompleteInteraction) {
+        const focusedValue = interaction.options.getFocused();
+        const tags = (
+            await prisma.tag.findMany({ where: { name: { startsWith: focusedValue } } })
+        ).map((t) => ({ name: t.name, value: t.name }));
+
+        interaction.respond(tags);
     }
 };
