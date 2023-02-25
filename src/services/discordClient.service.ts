@@ -28,9 +28,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
 });
 
 client.on(Events.GuildMemberAdd, async (member) => {
+    const guild = client.guilds.cache.get(process.env.GUILD_ID);
+    guild.members.addRole({ role: await getRoleByName('Community Ping'), user: member.user.id });
+
     const isMuted = await prisma.mute.findFirst({ where: { userId: member.user.id } });
     if (isMuted) {
-        const guild = client.guilds.cache.get(process.env.GUILD_ID);
         guild.members.addRole({ role: await getRoleByName('muted'), user: member.user.id });
     }
 });
