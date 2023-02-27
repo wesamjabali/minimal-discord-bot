@@ -31,7 +31,7 @@ export const tag: Command = {
             return;
         }
 
-        interaction.reply(`${user ? user + ':\n' : ''}${tag.content}`);
+        interaction.reply(`${user ? `<@${user.id}>:\n` : ''}${tag.content}`);
     },
     async autocomplete(interaction: AutocompleteInteraction) {
         const focusedValue = interaction.options.getFocused();
