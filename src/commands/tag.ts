@@ -26,12 +26,12 @@ export const tag: Command = {
         const tag = await prisma.tag.findUnique({ where: { name } });
         const user = interaction.options.getUser('user', false);
 
-        if (tag.content) {
-            interaction.reply(`Tag \`${name}\`${user ? ` for ${user}` : ''}: \n ${tag.content}`);
+        if (!tag.content) {
+            interaction.reply(`Tag ${name} doesn't exist.`);
             return;
         }
 
-        interaction.reply(`Tag ${name} doesn't exist.`);
+        interaction.reply(`${user ? user + ':\n' : ''}${tag.content}`);
     },
     async autocomplete(interaction: AutocompleteInteraction) {
         const focusedValue = interaction.options.getFocused();
