@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import { ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import parse from 'parse-duration';
 import { Command } from './Command.class';
+import { warnUser } from './warn';
 
 export const mute: Command = {
     data: new SlashCommandBuilder()
@@ -54,6 +55,7 @@ export const mute: Command = {
             create: { userId: mutedUser.id, endDate },
             update: { endDate }
         });
+        await warnUser(mutedUser.id, `Muted for ${time} for ${reason}`);
 
         interaction.reply(`Muted <@${mutedUser.id}> for ${time} for ${reason}`);
     }

@@ -18,10 +18,12 @@ export const warn: Command = {
     async execute(interaction: ChatInputCommandInteraction) {
         const warnedUser = interaction.options.getUser('user', true);
         const reason = interaction.options.getString('reason', true);
-        await addUserToDb(warnedUser.id);
-
-        await prisma.warning.create({ data: { userId: warnedUser.id, reason: reason } });
-
+        warnUser(warnedUser.id, reason);
         interaction.reply(`Warned <@${warnedUser.id}> for ${reason}`);
     }
+};
+
+export const warnUser = async (userId: string, reason: string) => {
+    await addUserToDb(userId);
+    await prisma.warning.create({ data: { userId, reason } });
 };
