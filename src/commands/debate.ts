@@ -152,7 +152,7 @@ export const debate: Command = {
 
                 if (
                     !(interaction.member.roles as GuildMemberRoleManager).cache.has(
-                        (await getRoleByName('Senior Moderator')).id
+                        (await getRoleByName('Senior Moderator [SM]'))?.id
                     )
                 ) {
                     addCooldown(interaction.user.id);
