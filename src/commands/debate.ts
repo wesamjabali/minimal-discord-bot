@@ -1,3 +1,5 @@
+import { client } from '@/services/discordClient.service';
+import { getRoleByName } from '@/utils/getRoleByName.util';
 import dayjs from 'dayjs';
 import {
     ActionRowBuilder,
@@ -6,6 +8,7 @@ import {
     ButtonStyle,
     ChannelType,
     ChatInputCommandInteraction,
+    GuildMemberRoleManager,
     SlashCommandBuilder,
     ThreadChannel
 } from 'discord.js';
@@ -22,7 +25,7 @@ export const debateCooldowns = new Map<string, Date>();
 
 const sendWarning = (thread: ThreadChannel, timeLeft: number) => {
     thread.send(
-        `Debate thread will end in ${
+        `Debate thread will be permanently deleted in ${
             timeLeft >= 1 ? `${timeLeft.toFixed()} minutes` : `${(timeLeft * 60).toFixed()} seconds`
         }.`
     );
@@ -30,9 +33,12 @@ const sendWarning = (thread: ThreadChannel, timeLeft: number) => {
 
 const closeThread = async (thread: ThreadChannel, topic: string) => {
     if (!thread.memberCount) return thread.delete();
+    await thread.setLocked(true);
     const removePromises = [];
     thread.members.cache.forEach((member) => {
-        removePromises.push(thread.members.remove(member.id));
+        if (member.user.id !== client.user.id) {
+            removePromises.push(thread.members.remove(member.id));
+        }
     });
 
     await Promise.allSettled(removePromises);
@@ -71,7 +77,13 @@ export const debate: Command = {
         const warningTimes = warningTimesMinutes.map((time) => threadLifespanMinutes - time);
         const topic = interaction.options.getString('topic', true);
         const channel = interaction.channel;
-        addCooldown(interaction.user.id);
+        if (
+            !(interaction.member.roles as GuildMemberRoleManager).cache.has(
+                (await getRoleByName('Senior Moderator')).id
+            )
+        ) {
+            addCooldown(interaction.user.id);
+        }
 
         const thread = await channel.threads.create({
             name: `Debate: ${topic}`,
@@ -123,6 +135,11 @@ export const debate: Command = {
 
                 if (!thread) return;
 
+                if (thread.locked) {
+                    interaction.deleteReply();
+                    return;
+                }
+
                 if (thread.members.cache.has(interaction.user.id)) {
                     interaction.reply({
                         ephemeral: true,
@@ -133,7 +150,13 @@ export const debate: Command = {
 
                 await thread.members.add(interaction.user.id);
 
-                addCooldown(interaction.user.id);
+                if (
+                    !(interaction.member.roles as GuildMemberRoleManager).cache.has(
+                        (await getRoleByName('Senior Moderator')).id
+                    )
+                ) {
+                    addCooldown(interaction.user.id);
+                }
 
                 await interaction.reply({ ephemeral: true, content: 'Joined!' });
                 interaction.deleteReply();
