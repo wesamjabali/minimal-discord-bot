@@ -12,8 +12,11 @@ import {
 import { Command } from './Command.class';
 
 const cooldownMinutes = 180 as const;
-const threadLifespanMinutes = 20 as const;
-const warningTimesMinutes = [0.17, 0.5, 1, 5, 10, 15] as const;
+// const threadLifespanMinutes = 20 as const;
+// const warningTimesMinutes = [0.17, 0.5, 1, 5, 10, 15] as const;
+
+const threadLifespanMinutes = 0.5 as const;
+const warningTimesMinutes = [0.25] as const;
 
 const threadMembers = new Map<string, string[]>();
 export const debateCooldowns = new Map<string, Date>();
@@ -28,6 +31,7 @@ const sendWarning = (thread: ThreadChannel, timeLeft: number) => {
 
 const closeThread = async (thread: ThreadChannel, topic: string) => {
     const memberIds = threadMembers.get(topic);
+    thread.parent.type === ChannelType.GuildText && thread.parent.send(memberIds?.join(','));
     if (!memberIds) return thread.delete();
 
     memberIds.forEach((memberId) => thread.members.remove(memberId));
