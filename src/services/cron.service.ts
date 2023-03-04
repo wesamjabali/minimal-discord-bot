@@ -1,3 +1,4 @@
+import { debateCooldowns } from '@/commands/debate';
 import { unbanUser } from '@/commands/unban';
 import { unmuteUser } from '@/commands/unmute';
 import cron from 'node-cron';
@@ -7,6 +8,10 @@ const start = () => {
     cron.schedule('* * * * *', async () => {
         const bans = await prisma.ban.findMany({ where: { endDate: { lte: new Date() } } });
         const mutes = await prisma.mute.findMany({ where: { endDate: { lte: new Date() } } });
+
+        debateCooldowns.forEach((date, userId) => {
+            if (date < new Date()) debateCooldowns.delete(userId);
+        });
 
         const promises = [
             bans.map((ban) => unbanUser(ban.userId)),

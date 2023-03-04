@@ -33,6 +33,14 @@ client.on(Events.InteractionCreate, async (interaction) => {
             )
             ?.autocomplete(interaction);
     }
+
+    if (interaction.isButton()) {
+        commands.find((command) =>
+            command.actions
+                ?.find((action) => action.id === interaction.customId)
+                ?.execute(interaction)
+        );
+    }
 });
 
 client.on(Events.GuildMemberAdd, async (member) => {

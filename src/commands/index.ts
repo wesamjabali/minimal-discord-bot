@@ -1,4 +1,5 @@
 import { ban } from './ban';
+import { debate } from './debate';
 import { mute } from './mute';
 import { ping } from './ping';
 import { purge } from './purge';
@@ -23,5 +24,6 @@ export const commands = [
     tagEdit,
     tag,
     tagList,
-    unwarn
+    unwarn,
+    debate
 ] as const;
