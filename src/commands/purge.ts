@@ -39,10 +39,8 @@ export const purge: Command = {
             cache: false
         });
 
-        messages.forEach((message) => {
-            if (user && message.author.id !== user.id) return;
-            message.delete();
-        });
+        messages.filter((message) => (user ? message.author.id === user.id : true));
+        await interaction.channel.bulkDelete(messages);
 
         interaction.reply({
             content: `Purged ${amount} messages${user ? ` from <@${user.id}>` : ''}`,
