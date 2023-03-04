@@ -26,22 +26,20 @@ export const debateCooldowns = new Map<string, Date>();
 const sendWarning = (thread: ThreadChannel, timeLeft: number) => {
     thread.send(
         `Debate thread will be permanently deleted in ${
-            timeLeft >= 1 ? `${timeLeft.toFixed()} minutes` : `${(timeLeft * 60).toFixed()} seconds`
+            timeLeft > 1 ? `${timeLeft.toFixed()} minutes` : `${(timeLeft * 60).toFixed()} seconds`
         }.`
     );
 };
 
 const closeThread = async (thread: ThreadChannel, topic: string) => {
-    if (!thread.memberCount) return thread.delete();
-    await thread.setLocked(true);
     const removePromises = [];
     thread.members.cache.forEach((member) => {
         if (member.user.id !== client.user.id) {
             removePromises.push(thread.members.remove(member.id));
         }
     });
-
     await Promise.allSettled(removePromises);
+    await thread.setLocked(true);
 };
 
 const addCooldown = (userId: string) => {
@@ -98,7 +96,8 @@ export const debate: Command = {
                 .setStyle(ButtonStyle.Primary)
         );
 
-        await interaction.reply({
+        const reply = await interaction.deferReply({ fetchReply: true });
+        await interaction.editReply({
             content: `Debate thread for "${topic}" has started.`,
             components: [row]
         });
@@ -110,12 +109,14 @@ export const debate: Command = {
             );
         });
         setTimeout(async () => {
+            if (interaction.channel.type !== ChannelType.GuildText) return;
             row.setComponents(...[row.components[0].setDisabled(true)]);
-            await interaction.editReply({
+            await closeThread(thread, topic);
+            const message = await interaction.channel.messages.fetch(reply);
+            await message.edit({
                 content: `Debate thread for "${topic}" has concluded.`,
                 components: [row]
             });
-            await closeThread(thread, topic);
         }, 1000 * 60 * threadLifespanMinutes);
 
         thread.send(
