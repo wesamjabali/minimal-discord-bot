@@ -18,7 +18,6 @@ const cooldownMinutes = 180 as const;
 const threadLifespanMinutes = 0.5 as const;
 const warningTimesMinutes = [0.25] as const;
 
-const threadMembers = new Map<string, string[]>();
 export const debateCooldowns = new Map<string, Date>();
 
 const sendWarning = (thread: ThreadChannel, timeLeft: number) => {
@@ -30,11 +29,13 @@ const sendWarning = (thread: ThreadChannel, timeLeft: number) => {
 };
 
 const closeThread = async (thread: ThreadChannel, topic: string) => {
-    const memberIds = threadMembers.get(topic);
-    thread.parent.type === ChannelType.GuildText && thread.parent.send(memberIds?.join(','));
-    if (!memberIds) return thread.delete();
+    if (!thread.memberCount) return thread.delete();
+    const removePromises = [];
+    thread.members.cache.forEach((member) => {
+        removePromises.push(thread.members.remove(member.id));
+    });
 
-    memberIds.forEach((memberId) => thread.members.remove(memberId));
+    await Promise.allSettled(removePromises);
 };
 
 const addCooldown = (userId: string) => {
@@ -131,11 +132,6 @@ export const debate: Command = {
                 }
 
                 await thread.members.add(interaction.user.id);
-
-                threadMembers.set(topic, [
-                    ...(threadMembers.get(topic) ?? []),
-                    interaction.user.id
-                ]);
 
                 addCooldown(interaction.user.id);
 
