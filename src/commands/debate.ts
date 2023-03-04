@@ -18,8 +18,8 @@ const cooldownMinutes = 180 as const;
 const threadLifespanMinutes = 20 as const;
 const warningTimesMinutes = [0.17, 0.5, 1, 5, 10, 15] as const;
 
-// const threadLifespanMinutes = 0.5 as const;
-// const warningTimesMinutes = [0.25] as const;
+// const threadLifespanMinutes = 0.1 as const;
+// const warningTimesMinutes = [0.1] as const;
 
 export const debateCooldowns = new Map<string, Date>();
 
@@ -109,13 +109,13 @@ export const debate: Command = {
                 1000 * 60 * timeLeft
             );
         });
-        setTimeout(() => {
-            closeThread(thread, topic);
+        setTimeout(async () => {
             row.setComponents(...[row.components[0].setDisabled(true)]);
-            interaction.editReply({
+            await interaction.editReply({
                 content: `Debate thread for "${topic}" has concluded.`,
                 components: [row]
             });
+            await closeThread(thread, topic);
         }, 1000 * 60 * threadLifespanMinutes);
 
         thread.send(
@@ -136,7 +136,7 @@ export const debate: Command = {
                 if (!thread) return;
 
                 if (thread.locked) {
-                    interaction.deleteReply();
+                    interaction.update({ content: 'This thread is locked.', components: [] });
                     return;
                 }
 
