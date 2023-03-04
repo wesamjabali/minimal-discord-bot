@@ -116,9 +116,17 @@ export const debate: Command = {
                     .filter((thread) => thread.name === `Debate: ${topic}`)
                     .last();
 
-                if (thread) {
-                    await thread.members.add(interaction.user.id);
+                if (!thread) return;
+
+                if (thread.members.cache.has(interaction.user.id)) {
+                    interaction.reply({
+                        ephemeral: true,
+                        content: 'You are already in this thread!'
+                    });
+                    return;
                 }
+
+                await thread.members.add(interaction.user.id);
 
                 threadMembers.set(topic, [
                     ...(threadMembers.get(topic) ?? []),
