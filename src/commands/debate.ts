@@ -14,12 +14,9 @@ import {
 } from 'discord.js';
 import { Command } from './Command.class';
 
-const cooldownMinutes = 180 as const;
+const cooldownMinutes = 30 as const;
 const threadLifespanMinutes = 20 as const;
 const warningTimesMinutes = [0.17, 0.5, 1, 5, 10, 15] as const;
-
-// const threadLifespanMinutes = 0.1 as const;
-// const warningTimesMinutes = [0.1] as const;
 
 export const debateCooldowns = new Map<string, Date>();
 
