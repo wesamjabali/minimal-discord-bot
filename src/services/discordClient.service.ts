@@ -1,8 +1,11 @@
 import { commands } from '@/commands';
 import { addUserToDb } from '@/utils/addUser.util';
 import { getRoleByName } from '@/utils/getRoleByName.util';
-import { handleCountToInfinity } from '@/utils/handleCountToInfinity.util';
-import { Client, Events, GatewayIntentBits } from 'discord.js';
+import {
+    handleCountToInfinity,
+    handleCountToInfinityEdit
+} from '@/utils/handleCountToInfinity.util';
+import { Client, Events, GatewayIntentBits, Message } from 'discord.js';
 import { prisma } from './prisma.service';
 
 const client = new Client({
@@ -57,6 +60,13 @@ client.on(Events.GuildMemberAdd, async (member) => {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
     if (message.channel.id === '542205321012051971') handleCountToInfinity(message);
+});
+
+client.on('messageUpdate', async (oldMessage: Message, newMessage: Message) => {
+    if (newMessage.author.bot) return;
+    if (newMessage.channel.id === '542205321012051971') {
+        handleCountToInfinityEdit(oldMessage, newMessage);
+    }
 });
 
 export { client };

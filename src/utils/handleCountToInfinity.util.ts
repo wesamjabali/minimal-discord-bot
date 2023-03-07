@@ -19,4 +19,13 @@ const handleCountToInfinity = async (message: Message) => {
         message.delete();
     }
 };
-export { handleCountToInfinity };
+
+const handleCountToInfinityEdit = async (oldMessage: Message, newMessage: Message) => {
+    const oldNumber = parseInt(oldMessage.content.split(' ')[0]);
+    const newNumber = parseInt(newMessage.content.split(' ')[0]);
+
+    if (oldNumber !== newNumber) {
+        newMessage.delete();
+    }
+};
+export { handleCountToInfinity, handleCountToInfinityEdit };
