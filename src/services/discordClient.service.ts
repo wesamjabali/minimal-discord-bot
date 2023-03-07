@@ -1,6 +1,7 @@
 import { commands } from '@/commands';
 import { addUserToDb } from '@/utils/addUser.util';
 import { getRoleByName } from '@/utils/getRoleByName.util';
+import { handleCountToInfinity } from '@/utils/handleCountToInfinity.util';
 import { Client, Events, GatewayIntentBits } from 'discord.js';
 import { prisma } from './prisma.service';
 
@@ -51,6 +52,11 @@ client.on(Events.GuildMemberAdd, async (member) => {
     if (isMuted) {
         guild.members.addRole({ role: await getRoleByName('muted'), user: member.user.id });
     }
+});
+
+client.on('messageCreate', async (message) => {
+    if (message.author.bot) return;
+    if (message.channel.id === '542205321012051971') handleCountToInfinity(message);
 });
 
 export { client };
