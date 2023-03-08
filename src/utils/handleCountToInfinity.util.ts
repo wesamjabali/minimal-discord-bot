@@ -1,4 +1,5 @@
 import { ChannelType, Message } from 'discord.js';
+const parseIntBase10 = (stringToParse: string) => parseInt(stringToParse.split(' ')[0], 10);
 
 const handleCountToInfinity = async (message: Message) => {
     if (message.channel.type !== ChannelType.GuildText) return;
@@ -11,8 +12,8 @@ const handleCountToInfinity = async (message: Message) => {
     const lastMessage = messages.last();
     const currentMessage = messages.first();
 
-    const lastMessageNumber = parseInt(lastMessage.content.split(' ')[0]);
-    const currentMessageNumber = parseInt(currentMessage.content.split(' ')[0]);
+    const lastMessageNumber = parseIntBase10(lastMessage.content.split(' ')[0]);
+    const currentMessageNumber = parseIntBase10(currentMessage.content.split(' ')[0]);
 
     console.log(lastMessageNumber, currentMessage.content);
     if (lastMessageNumber + 1 !== currentMessageNumber) {
@@ -21,8 +22,8 @@ const handleCountToInfinity = async (message: Message) => {
 };
 
 const handleCountToInfinityEdit = async (oldMessage: Message, newMessage: Message) => {
-    const oldNumber = parseInt(oldMessage.content.split(' ')[0]);
-    const newNumber = parseInt(newMessage.content.split(' ')[0]);
+    const oldNumber = parseIntBase10(oldMessage.content.split(' ')[0]);
+    const newNumber = parseIntBase10(newMessage.content.split(' ')[0]);
 
     if (oldNumber !== newNumber) {
         newMessage.delete();
