@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import parse from 'parse-duration';
 import { Command } from './Command.class';
-import { warnUser } from './warn';
+import { jailUser } from './warn';
 
 export const ban: Command = {
     data: new SlashCommandBuilder()
@@ -46,7 +46,7 @@ export const ban: Command = {
             create: { userId: bannedUser.id, endDate },
             update: { endDate }
         });
-        await warnUser(bannedUser.id, `Banned for ${time} for ${reason}`);
+        await jailUser(bannedUser.id, `Banned for ${time} for ${reason}`);
 
         interaction.reply(`Banned <@${bannedUser.id}> for ${time} for ${reason}`);
     }

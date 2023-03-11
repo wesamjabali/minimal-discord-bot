@@ -10,13 +10,12 @@ import { Command } from './Command.class';
 export const purge: Command = {
     data: new SlashCommandBuilder()
         .setName('purge')
-        .setDescription('Purge up to 100 messages.')
+        .setDescription('Purge messages.')
         .addIntegerOption((option) =>
             option
                 .setName('amount')
                 .setDescription('Amount of messages to purge.')
                 .setMinValue(1)
-                .setMaxValue(100)
                 .setRequired(true)
         )
         .addUserOption((option) =>

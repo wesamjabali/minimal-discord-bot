@@ -5,24 +5,22 @@ import dayjs from 'dayjs';
 import { ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import parse from 'parse-duration';
 import { Command } from './Command.class';
-import { warnUser } from './warn';
+import { jailUser } from './warn';
 
-export const mute: Command = {
+export const jail: Command = {
     data: new SlashCommandBuilder()
-        .setName('mute')
+        .setName('jail')
         .setDescription('Mute a user for an amount of time.')
         .addUserOption((option) =>
-            option.setName('user').setDescription('The user to mute.').setRequired(true)
+            option.setName('user').setDescription('The user to jail.').setRequired(true)
         )
         .addStringOption((option) =>
             option
                 .setName('time')
-                .setDescription('Length of mute. (e.g. 1h, 1d, 1w, 1m, 1y)')
+                .setDescription('Length of jail. (e.g. 1h, 1d, 1 week, 1 month, 1 year)')
                 .setRequired(true)
         )
-        .addBooleanOption((option) =>
-            option.setName('jail').setDescription('Give the muted user the jail role.')
-        )
+
         .addStringOption((option) => option.setName('reason').setDescription('Reason for mute.'))
         .setDefaultMemberPermissions(PermissionFlagsBits.MuteMembers)
         .toJSON(),
@@ -30,7 +28,7 @@ export const mute: Command = {
         const mutedUser = interaction.options.getUser('user', true);
         const time = interaction.options.getString('time', true);
         const reason = interaction.options.getString('reason', false) ?? '[no reason given]';
-        const isJailed = interaction.options.getBoolean('jail', false) ?? true;
+
         const timeMs = parse(time);
 
         await addUserToDb(mutedUser.id);
@@ -46,7 +44,7 @@ export const mute: Command = {
 
         await interaction.guild.members.addRole({
             user: mutedUser.id,
-            role: isJailed ? await getRoleByName('jailed') : await getRoleByName('muted'),
+            role: await getRoleByName('jailed'),
             reason
         });
 
@@ -55,8 +53,8 @@ export const mute: Command = {
             create: { userId: mutedUser.id, endDate },
             update: { endDate }
         });
-        await warnUser(mutedUser.id, `Muted for ${time} for ${reason}`);
+        await jailUser(mutedUser.id, `Jailed for ${time} for ${reason}`);
 
-        interaction.reply(`Muted <@${mutedUser.id}> for ${time} for ${reason}`);
+        interaction.reply(`Jailed <@${mutedUser.id}> for ${time} for ${reason}`);
     }
 };

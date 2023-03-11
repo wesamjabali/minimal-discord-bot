@@ -4,32 +4,28 @@ import { getRoleByName } from '@/utils/getRoleByName.util';
 import { ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { Command } from './Command.class';
 
-export const unmute: Command = {
+export const unjail: Command = {
     data: new SlashCommandBuilder()
-        .setName('unmute')
-        .setDescription('Unmute a user.')
+        .setName('unjail')
+        .setDescription('Unjail a user.')
         .addUserOption((option) =>
-            option.setName('user').setDescription('The user to unmute.').setRequired(true)
+            option.setName('user').setDescription('The user to unjail.').setRequired(true)
         )
         .setDefaultMemberPermissions(PermissionFlagsBits.MuteMembers)
         .toJSON(),
     async execute(interaction: ChatInputCommandInteraction) {
         const mutedUser = interaction.options.getUser('user', true);
-        await unmuteUser(mutedUser.id);
-        interaction.reply(`Unmuted <@${mutedUser.id}>`);
+        await unjailUser(mutedUser.id);
+        interaction.reply(`Unjailed <@${mutedUser.id}>`);
     }
 };
 
-const unmuteUser = async (userId: string) => {
+const unjailUser = async (userId: string) => {
     const guild = client.guilds.cache.get(process.env.GUILD_ID);
 
-    const promises = [
-        guild.members.removeRole({ role: await getRoleByName('jailed'), user: userId }),
-        guild.members.removeRole({ role: await getRoleByName('muted'), user: userId })
-    ];
+    await guild.members.removeRole({ role: await getRoleByName('jailed'), user: userId });
 
-    await Promise.allSettled(promises);
     await prisma.mute.delete({ where: { userId } });
 };
 
-export { unmuteUser };
+export { unjailUser };

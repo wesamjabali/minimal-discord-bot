@@ -1,6 +1,6 @@
 import { debateCooldowns } from '@/commands/debate';
 import { unbanUser } from '@/commands/unban';
-import { unmuteUser } from '@/commands/unmute';
+import { unjailUser } from '@/commands/unjail';
 import cron from 'node-cron';
 import { prisma } from './prisma.service';
 
@@ -15,7 +15,7 @@ const start = () => {
 
         const promises = [
             bans.map((ban) => unbanUser(ban.userId)),
-            mutes.map((mute) => unmuteUser(mute.userId))
+            mutes.map((mute) => unjailUser(mute.userId))
         ];
 
         await Promise.allSettled(promises);
