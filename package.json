@@ -1,5 +1,5 @@
 {
-  "name": "ppbot",
+  "name": "minibot",
   "version": "1.0.0",
   "description": "",
   "main": "src/main.ts",
@@ -7,8 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/main.ts",
     "register": "ts-node -r tsconfig-paths/register src/scripts/registerCommands.ts",
-    "start": "pm2 start \"ts-node -r tsconfig-paths/register src/main.ts\" --name ppbot",
-    "stop": "pm2 stop ppbot",
+    "start": "pm2 start \"ts-node -r tsconfig-paths/register src/main.ts\" --name minibot",
+    "stop": "pm2 stop minibot",
     "build": "tsc --build"
   },
   "keywords": [],
